@@ -78,9 +78,6 @@ async function streamGpt({ system, prompt }: TurnBody, signal: AbortSignal, writ
 
 export async function POST(req: Request) {
   const auth = checkPassword(req.headers.get("x-app-password"));
-  if (auth === "not-configured") {
-    return Response.json({ error: "APP_PASSWORD não está configurada no servidor." }, { status: 500 });
-  }
   if (auth === "unauthorized") {
     return Response.json({ error: "Senha incorreta." }, { status: 401 });
   }

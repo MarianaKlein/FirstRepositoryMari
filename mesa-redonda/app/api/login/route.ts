@@ -1,11 +1,11 @@
-import { checkPassword } from "@/lib/auth";
+import { checkPassword, passwordRequired } from "@/lib/auth";
+
+export async function GET() {
+  return Response.json({ required: passwordRequired() });
+}
 
 export async function POST(req: Request) {
-  const result = checkPassword(req.headers.get("x-app-password"));
-  if (result === "not-configured") {
-    return Response.json({ error: "APP_PASSWORD não está configurada no servidor." }, { status: 500 });
-  }
-  if (result === "unauthorized") {
+  if (checkPassword(req.headers.get("x-app-password")) === "unauthorized") {
     return Response.json({ error: "Senha incorreta." }, { status: 401 });
   }
   return Response.json({ ok: true });

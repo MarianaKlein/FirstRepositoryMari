@@ -52,11 +52,16 @@ function safeSet(storage: "local" | "session", key: string, value: string | null
 
 export default function Home() {
   const [password, setPassword] = useState<string | null>(null);
+  const [required, setRequired] = useState(false);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
     setPassword(safeGet("session", PASSWORD_KEY));
-    setReady(true);
+    fetch("/api/login")
+      .then((res) => res.json())
+      .then((data) => setRequired(Boolean(data.required)))
+      .catch(() => {})
+      .finally(() => setReady(true));
   }, []);
 
   const logout = useCallback(() => {
@@ -65,7 +70,7 @@ export default function Home() {
   }, []);
 
   if (!ready) return null;
-  if (!password) {
+  if (required && !password) {
     return (
       <Login
         onSuccess={(pw) => {
@@ -75,7 +80,7 @@ export default function Home() {
       />
     );
   }
-  return <Table password={password} onLogout={logout} />;
+  return <Table password={password ?? ""} showLogout={required} onLogout={logout} />;
 }
 
 function Login({ onSuccess }: { onSuccess: (pw: string) => void }) {
@@ -117,7 +122,15 @@ function Login({ onSuccess }: { onSuccess: (pw: string) => void }) {
   );
 }
 
-function Table({ password, onLogout }: { password: string; onLogout: () => void }) {
+function Table({
+  password,
+  showLogout,
+  onLogout,
+}: {
+  password: string;
+  showLogout: boolean;
+  onLogout: () => void;
+}) {
   const [briefing, setBriefing] = useState("");
   const [cfg, setCfg] = useState<Config>(DEFAULT_CONFIG);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -262,9 +275,11 @@ function Table({ password, onLogout }: { password: string; onLogout: () => void 
       <aside className="side">
         <header className="side-head">
           <h1>Mesa-redonda</h1>
-          <button className="link" onClick={onLogout}>
-            Sair
-          </button>
+          {showLogout && (
+            <button className="link" onClick={onLogout}>
+              Sair
+            </button>
+          )}
         </header>
 
         <label>

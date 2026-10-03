@@ -22,12 +22,12 @@ Em todos os modos dá para gerar uma **versão final** (escolha quem fecha), mud
    |---|---|
    | `ANTHROPIC_API_KEY` | chave da Anthropic |
    | `OPENAI_API_KEY` | chave da OpenAI |
-   | `APP_PASSWORD` | senha única que você vai passar para o time |
+   | `APP_PASSWORD` | *(opcional)* se preenchida, o app pede essa senha ao abrir |
 
    Opcionais: `CLAUDE_MODEL` (padrão `claude-opus-5-5`) e `OPENAI_MODEL` (padrão `gpt-4o`).
-4. **Deploy.** Compartilhe o endereço e a senha com o time.
+4. **Deploy.** Compartilhe o endereço com o time.
 
-> As chaves ficam só no servidor (nunca no navegador). Sem `APP_PASSWORD` o app recusa tudo, para ninguém de fora gastar o seu crédito. Defina um limite de gasto mensal nos dois consoles.
+> As chaves ficam só no servidor (nunca no navegador). **Sem login, qualquer pessoa com o endereço consegue usar o app e gastar o crédito das suas chaves.** Por isso: não divulgue o link fora do time, defina um limite de gasto mensal nos dois consoles e, se precisar, cadastre `APP_PASSWORD` a qualquer momento.
 
 ## Rodar localmente
 
@@ -45,4 +45,4 @@ O navegador conduz as rodadas e chama `/api/turn` uma vez por fala. Cada chamada
 - `app/page.tsx`: interface e execução das rodadas
 - `lib/orchestrate.ts`: modos, papéis e montagem dos prompts
 - `app/api/turn/route.ts`: chamada em streaming a Claude e GPT
-- `lib/auth.ts`: senha compartilhada
+- `lib/auth.ts`: senha compartilhada (opcional)
